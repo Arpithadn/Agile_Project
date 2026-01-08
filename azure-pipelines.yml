@@ -1,11 +1,11 @@
 trigger:
-  - main   # Runs on push to main branch
+  - main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-  - task: Checkout@1
+  - checkout: self
 
   - script: |
       mkdir -p $(Build.ArtifactStagingDirectory)/artifact1
@@ -19,6 +19,12 @@ steps:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifact1'
-      ArtifactName: 'artifact1'
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/artifact1'
+      artifactName: 'artifact1'
+      publishLocation: 'Container'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/artifact2'
+      artifactName: 'artifact2'
       publishLocation: 'Container'
