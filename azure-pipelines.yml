@@ -1,45 +1,24 @@
 trigger:
-- artifact  # branch name
+  - main   # Runs on push to main branch
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-# Copy main code folder
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/src'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/App'
-    
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/App'
-    artifact: 'AppArtifact'
-    publishLocation: 'pipeline'
+  - task: Checkout@1
 
-# Copy docs folder
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/docs'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/Docs'
+  - script: |
+      mkdir -p $(Build.ArtifactStagingDirectory)/artifact1
+      echo "This is artifact 1" > $(Build.ArtifactStagingDirectory)/artifact1/file1.txt
+    displayName: 'Build Artifact 1'
 
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/Docs'
-    artifact: 'DocsArtifact'
-    publishLocation: 'pipeline'
+  - script: |
+      mkdir -p $(Build.ArtifactStagingDirectory)/artifact2
+      echo "This is artifact 2" > $(Build.ArtifactStagingDirectory)/artifact2/file2.txt
+    displayName: 'Build Artifact 2'
 
-# Copy configuration or scripts
-- task: CopyFiles@2
-  inputs:
-    SourceFolder: '$(Build.SourcesDirectory)/scripts'
-    Contents: '**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)/Scripts'
-
-- task: PublishPipelineArtifact@1
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/Scripts'
-    artifact: 'ScriptsArtifact'
-    publishLocation: 'pipeline'
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/artifact1'
+      ArtifactName: 'artifact1'
+      publishLocation: 'Container'
