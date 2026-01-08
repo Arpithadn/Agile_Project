@@ -1,23 +1,45 @@
 trigger:
-- Agile-Artifact
+- artifact  # branch name
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: Maven@3
-  inputs:
-    mavenPomFile: 'pom.xml'
-    goals: 'clean install -DskipTests'
-
+# Copy main code folder
 - task: CopyFiles@2
   inputs:
-    SourceFolder: '$(Build.SourcesDirectory)'
-    Contents: '**/target/*.jar'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    SourceFolder: '$(Build.SourcesDirectory)/src'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/App'
+    
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/App'
+    artifact: 'AppArtifact'
+    publishLocation: 'pipeline'
+
+# Copy docs folder
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/docs'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/Docs'
 
 - task: PublishPipelineArtifact@1
   inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)'
-    artifact: 'Agile-Artifact'
+    targetPath: '$(Build.ArtifactStagingDirectory)/Docs'
+    artifact: 'DocsArtifact'
+    publishLocation: 'pipeline'
+
+# Copy configuration or scripts
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Build.SourcesDirectory)/scripts'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/Scripts'
+
+- task: PublishPipelineArtifact@1
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/Scripts'
+    artifact: 'ScriptsArtifact'
     publishLocation: 'pipeline'
