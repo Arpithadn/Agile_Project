@@ -5,26 +5,21 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+  # 1. Checkout the repo
   - checkout: self
 
-  - script: |
-      mkdir -p $(Build.ArtifactStagingDirectory)/artifact1
-      echo "This is artifact 1" > $(Build.ArtifactStagingDirectory)/artifact1/file1.txt
-    displayName: 'Build Artifact 1'
-
-  - script: |
-      mkdir -p $(Build.ArtifactStagingDirectory)/artifact2
-      echo "This is artifact 2" > $(Build.ArtifactStagingDirectory)/artifact2/file2.txt
-    displayName: 'Build Artifact 2'
-
+  # 2. Publish Test.txt as artifact
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)/artifact1'
-      artifactName: 'artifact1'
+      pathToPublish: 'Test.txt'
+      artifactName: 'TestArtifact'
       publishLocation: 'Container'
+    displayName: 'Publish Test.txt'
 
+  # 3. Publish hello.txt as artifact
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)/artifact2'
-      artifactName: 'artifact2'
+      pathToPublish: 'hello.txt'
+      artifactName: 'HelloArtifact'
       publishLocation: 'Container'
+    displayName: 'Publish hello.txt'
